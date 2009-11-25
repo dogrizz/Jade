@@ -31,4 +31,9 @@ public class Book extends Item {
         this.title = title;
         this.serial_number = Long.valueOf(title.hashCode());
     }
+    
+    public String toString() {
+        return title+" - "+author;
+    }
+    
 }

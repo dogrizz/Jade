@@ -34,4 +34,8 @@ public class CD extends Item {
         this.serial_number = Long.valueOf(name.hashCode());
     }
 
+    public String toString() {
+        return name;
+    }
+
 }

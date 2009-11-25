@@ -7,6 +7,7 @@ import pl.dzmitrow.agenci.sklep.stuff.Track;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
+import jade.content.onto.basic.Action;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
@@ -59,11 +60,12 @@ public class Seller extends Agent {
 
             @Override
             public void action() {
-                MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.PROPOSE);
+                MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
                 ACLMessage msg = receive(mt);
                 if (msg != null) {
                     try {
-                        Sell sell = (Sell) myAgent.getContentManager().extractContent(msg);
+                        Action action = (Action) myAgent.getContentManager().extractContent(msg);
+                        Sell sell = (Sell) action.getAction();
                         ACLMessage re = msg.createReply();
                         if (items.contains(sell.getItem())) {
                             re.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
@@ -72,6 +74,11 @@ public class Seller extends Agent {
                             re.setPerformative(ACLMessage.REJECT_PROPOSAL);
                         }
                         send(re);
+                        if (items.isEmpty()) {
+                            System.out.println("Seller - wszystko sprzedalem, zwijam interes");
+                            myAgent.doDelete();
+                            return;
+                        }
                     } catch (Exception e) {
                         System.out.println("respondSell - Blad przy odkodywaniu wiadomosci");
                         e.printStackTrace();

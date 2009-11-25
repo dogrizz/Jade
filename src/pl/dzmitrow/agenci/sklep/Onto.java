@@ -58,7 +58,7 @@ public class Onto extends Ontology {
             add(new AgentActionSchema(SELL), Sell.class);
 
             ConceptSchema cs = (ConceptSchema) getSchema(ITEM);
-            cs.add(ITEM_SERIAL, (PrimitiveSchema) getSchema(BasicOntology.INTEGER), ObjectSchema.OPTIONAL);
+            cs.add(ITEM_SERIAL, (PrimitiveSchema) getSchema(BasicOntology.INTEGER), ObjectSchema.MANDATORY);
 
             cs = (ConceptSchema) getSchema(CD);
             cs.addSuperSchema((ConceptSchema) getSchema(ITEM));

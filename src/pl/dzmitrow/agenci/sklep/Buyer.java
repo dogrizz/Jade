@@ -10,6 +10,7 @@ import jade.content.lang.Codec.CodecException;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
 import jade.content.onto.OntologyException;
+import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
@@ -83,11 +84,14 @@ public class Buyer extends Agent {
                         sell = new Sell(new AID(myAgent.getAID().getLocalName(), AID.ISLOCALNAME), (CD) want2buy);
                     }
                     ACLMessage re = msg.createReply();
-                    re.setPerformative(ACLMessage.PROPOSE);
+                    re.setPerformative(ACLMessage.REQUEST);
                     re.setOntology(onto.getName());
                     re.setLanguage(codec.getName());
                     try {
-                        myAgent.getContentManager().fillContent(re, sell);
+                        Action action = new Action();
+                        action.setAction(sell);
+                        action.setActor(seller);
+                        myAgent.getContentManager().fillContent(re, action);
                         send(re);
                     } catch (Exception e) {
                         System.out.println("anyoneHazMyItemz - Blad podczas redagowania wiadomosci");
@@ -113,8 +117,15 @@ public class Buyer extends Agent {
                         block(1);
                         return;
                     }
+                    System.out.println("Yupi! kupilem " + want2buy);
                     iHave.add((Item) want2buy);
+                    iWant.remove((Item) want2buy);
                     want2buy = null;
+                    if (iWant.isEmpty()) {
+                        System.out.println("Buyer - Już mam wszystko, znikam");
+                        myAgent.doDelete();
+                        return;
+                    }
                 } else {
                     block(1);
                 }
@@ -140,4 +151,5 @@ public class Buyer extends Agent {
         iWant.add(new CD("Me and Mr Jhonson", listaPiosenek));
 
     }
+    
 }
